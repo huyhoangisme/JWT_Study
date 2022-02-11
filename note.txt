@@ -1,0 +1,19 @@
+cài đặt các package
+--expesss
+--body-parser:1.19.0 (viết API, tối giản các tham số truyền từ client lên)
+--dotenv:8.2.0 (lấy các tham số trong file môi trường)
+--ejs:3.1.5 (view engine)
+--expesss: 4.17.1
+--@babel/core: 7.12.10 (compiler)
+--@babel/node:7.12.10 (compiler)
+--@babel/preset-env (compiler)
+--nodemon:2.0.7
++) Tổ chức cấu trúc thư mục:
+1. cấu hình tham số môi trường(.env)
+.babelrc(cấu hình compiler chạy)
+2. Cấu hình view engine -> ok
+
+Tải sequelize-cli:6.2.0
++) cách kết nối đến DB: gõ sequelize get started -> ok
++) tạo các trường của databases -> a part 
++) bcryptjs:2.4.3 -> dùng để hash 
