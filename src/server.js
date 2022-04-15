@@ -3,6 +3,8 @@ import viewEngine from "../src/config/viewEngine";
 import bodyParser from "body-parser";
 import initRouteWeb from "../src/router/web";
 import initRouteApi from "../src/router/api/userApi";
+import initRouteApiAllcode from "./router/api/allcodes";
+import initRouteDoctorApi from "./router/api/doctor"
 import connectDB from "../src/config/connectDB"
 import dotenv from "dotenv";
 // import cors from 'cors'
@@ -35,8 +37,10 @@ app.use(function (req, res, next) {
     next();
 });
 // config bodyParser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
 // connect database
 connectDB();
 // config viewEngine
@@ -45,6 +49,8 @@ viewEngine(app);
 initRouteWeb(app);
 // initRouteApi
 initRouteApi(app);
+initRouteApiAllcode(app);
+initRouteDoctorApi(app);
 // start server
 app.listen(port, () => {
     console.log(`Server on:http://localhost:${port}`);

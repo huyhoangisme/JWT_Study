@@ -7,7 +7,7 @@ let handleUserLogin = (email, password) => {
             const isExistEmail = await checkEmail(email);
             if (isExistEmail) {
                 let user = await db.User.findOne({
-                    attributes: ['email', 'password', 'roleId'],
+                    attributes: ['email', 'password', 'roleId', 'firstName', 'lastName'],
                     where: { email: email },
                     raw: true,
                 })
@@ -96,16 +96,19 @@ const createUser = async (user) => {
                 data.errMessage = "Email đã tồn tại. Vui lòng nhập email khác";
                 data.user = {};
             } else {
-                const createData = await db.User.create({
-                    firstName: user.firstname,
-                    lastName: user.lastname,
+                let createData = await db.User.create({
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     email: user.email,
                     password: password,
                     address: user.address,
                     phonenumber: user.phone,
                     gender: user.gender,
-                    roleId: user.roleid,
+                    roleId: user.roleId,
+                    image: user.avatar,
+                    positionId: user.position
                 })
+                // console.log("check", createData)
                 data.errCode = 0;
                 data.errMessage = "OK";
                 data.user = createData;
@@ -129,9 +132,39 @@ const deleteUser = async (id) => {
     })
 
 }
+const updateUser = async (id, user) => {
+    // console.log("Check user update", user);
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = await db.User.findOne({
+                where: { id: id },
+            })
+            if (data) {
+                data.firstName = user.firstName;
+                data.lastName = user.lastName;
+                data.email = user.email;
+                data.gender = user.gender;
+                data.phonenumber = user.phoneNumber;
+                data.roleId = user.roleId;
+                data.positionId = user.positionId;
+                // data.password = user.password
+                data.address = user.address;
+                data.image = user.avatar;
+                await data.save()
+                resolve(data);
+            } else {
+                resolve({});
+            }
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     handleUserLogin,
     getAllUsers,
     createUser,
-    deleteUser
+    deleteUser,
+    updateUser
 }

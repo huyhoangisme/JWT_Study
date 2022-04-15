@@ -72,8 +72,22 @@ const handleDeleteUser = async (req, res) => {
         })
     }
 }
-const handleUpdateUser = () => {
-
+const handleUpdateUser = async (req, res) => {
+    let dataUser = req.body;
+    let id = req.query.id;
+    if (!id || !dataUser) {
+        return res.status(500).json({
+            errCode: 1,
+            errMessage: 'Missing input parameters',
+        })
+    } else {
+        let data = await userModal.updateUser(id, dataUser);
+        return res.status(200).json({
+            errCode: 0,
+            errMessage: 'OK',
+            data: data,
+        })
+    }
 }
 module.exports = {
     handleLogin,
