@@ -11,12 +11,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Clinic.hasOne(models.DoctorInfo, { foreignKey: 'clinicID' });
         }
     };
     Clinic.init({
         address: DataTypes.STRING,
-        description: DataTypes.TEXT,
-        image: DataTypes.STRING,
+        contentMarkdown: DataTypes.TEXT,
+        contentHTML: DataTypes.TEXT,
+        image: DataTypes.BLOB,
         name: DataTypes.STRING,
     }, {
         sequelize,

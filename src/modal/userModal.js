@@ -58,6 +58,7 @@ const getAllUsers = async (id) => {
                 let Users = await db.User.findAll({
                     attributes: { exclude: ['password'] },
                     raw: true,
+                    nest: true
                 })
                 if (Users && Users.length > 0) {
                     resolve(Users);

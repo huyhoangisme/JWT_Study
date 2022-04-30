@@ -1,5 +1,4 @@
 import userModal from "../modal/userModal"
-import bcrypt from "bcryptjs";
 const handleLogin = async (req, res) => {
 
     // check email exist,

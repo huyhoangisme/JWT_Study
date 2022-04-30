@@ -62,7 +62,7 @@ let updateDetailDoctor = async (req, res) => {
                 message: `Can't update a doctor`,
             });
     } catch (err) {
-        console.log(err);
+        console.log("errorCode update:", err);
         return res.status(500).json({
             errCode: -1,
             message: "Error from server",
@@ -100,13 +100,13 @@ let scheduleDoctor = async (req, res) => {
             res.status(200).json({
                 errCode: 0,
                 message: "OK",
-                data: respond
+                data: respond,
             });
         } else {
             return res.status(200).json({
                 errCode: 1,
-                message: "can't fetch from database"
-            })
+                message: "can't fetch from database",
+            });
         }
     } catch (err) {
         console.log(err);
@@ -116,10 +116,88 @@ let scheduleDoctor = async (req, res) => {
         });
     }
 };
+let getScheduleDoctor = async (req, res) => {
+    try {
+        if (!req.query.doctorId || !req.query.date) {
+            return res.status(500).json({
+                errCode: 1,
+                message: "Missing input parameters",
+            });
+        } else {
+            let schedule = await doctorModal.handleGetScheduleDoctor(
+                req.query.doctorId,
+                req.query.date
+            );
+            if (schedule) {
+                return res.status(200).json({
+                    errCode: 0,
+                    message: "OK",
+                    data: schedule,
+                });
+            }
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            errCode: -1,
+            message: "Error from server",
+        });
+    }
+};
+
+let getDoctorInfoByID = async (req, res) => {
+    try {
+        if (!req.query.id) {
+            return res.status(200).json({
+                errCode: 1,
+                message: "Missing input parameters"
+            })
+        } else {
+            let data = await doctorModal.handleGetDoctorInfoByID(req.query.id);
+            return res.status(200).json({
+                errCode: 0,
+                message: 'OK',
+                data
+            })
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            errorCode: -1,
+            message: "Error from server"
+        })
+    }
+}
+let getSpecialClinicByID = async (req, res) => {
+    try {
+        if (!req.query.id) {
+            return res.status(200).json({
+                errorCode: 1,
+                message: "Missing input parameters"
+            })
+        } else {
+            let data = await doctorModal.handleGetSpecialClinicByID(req.query.id);
+            return res.status(200).json({
+                errCode: 0,
+                message: 'OK',
+                data
+            })
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            errorCode: -1,
+            message: "Error from server"
+        })
+    }
+}
 module.exports = {
     getTopDoctor,
     getAllDoctor,
     updateDetailDoctor,
     getDetailDoctor,
     scheduleDoctor,
+    getScheduleDoctor,
+    getDoctorInfoByID,
+    getSpecialClinicByID
 };
