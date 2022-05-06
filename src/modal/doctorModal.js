@@ -6,7 +6,7 @@ let getTopDoctor = (limit) => {
             let data = await db.User.findAll({
                 limit: limit,
                 where: { roleId: "R2" },
-                attributes: { exclude: ["password"] },
+                attributes: { exclude: ["password", "DoctorInfoId"] },
                 order: [["createdAt", "DESC"]],
                 include: [
                     {
@@ -18,6 +18,32 @@ let getTopDoctor = (limit) => {
                         model: db.Allcode,
                         as: "genderData",
                         attributes: ["valueVi", "valueEn"],
+                    },
+                    {
+                        model: db.DoctorInfo,
+                        as: "DoctorInfo",
+                        attributes: { exclude: ["id", "doctorId", "DoctorInfoId"] },
+                        include: [
+                            {
+                                model: db.Allcode,
+                                as: "priceData",
+                                attributes: ["valueVi", "valueEn"],
+                            },
+                            {
+                                model: db.Allcode,
+                                as: "paymentData",
+                                attributes: ["valueVi", "valueEn"],
+                            },
+                            {
+                                model: db.Specialty,
+                                as: "specialityData",
+                                attributes: ["name"],
+                            },
+                            {
+                                model: db.Clinic,
+                                attributes: ["name", "address"],
+                            },
+                        ]
                     },
                 ],
                 raw: true,
@@ -36,8 +62,37 @@ let handleGetAllDoctor = (id) => {
             if (id === "ALL") {
                 let data = await db.User.findAll({
                     where: { roleId: "R2" },
-                    attributes: { exclude: ["password", "image"] },
+                    attributes: { exclude: ["password", "image", "DoctorInfoId"] },
+                    include: [
+                        {
+                            model: db.DoctorInfo,
+                            as: "DoctorInfo",
+                            attributes: { exclude: ["id", "doctorId", "DoctorInfoId"] },
+                            include: [
+                                {
+                                    model: db.Allcode,
+                                    as: "priceData",
+                                    attributes: ["valueVi", "valueEn"],
+                                },
+                                {
+                                    model: db.Allcode,
+                                    as: "paymentData",
+                                    attributes: ["valueVi", "valueEn"],
+                                },
+                                {
+                                    model: db.Specialty,
+                                    as: "specialityData",
+                                    attributes: ["name"],
+                                },
+                                {
+                                    model: db.Clinic,
+                                    attributes: ["name", "address"],
+                                },
+                            ]
+                        },
+                    ],
                     raw: true,
+                    nest: true,
                 });
                 if (data) {
                     resolve(data);
@@ -81,9 +136,9 @@ let handleUpdateDoctor = (markdown) => {
             }
             let doctorInfo = await db.DoctorInfo.findOne({
                 where: {
-                    doctorId: markdown.doctorId
+                    doctorId: markdown.doctorId,
                 },
-                raw: false
+                raw: false,
             });
             if (doctorInfo) {
                 // implement update
@@ -102,8 +157,8 @@ let handleUpdateDoctor = (markdown) => {
                     address: markdown.addressId,
                     clinicID: markdown.clinicId,
                     specialityID: markdown.specialityId,
-                    paycash: markdown.paymentId
-                })
+                    paycash: markdown.paymentId,
+                });
             }
             resolve(doctorInfo);
         } catch (err) {
@@ -192,37 +247,46 @@ let handleGetDoctorInfoByID = (id) => {
                 where: { doctorId: id },
                 attributes: { exclude: ["id", "createdAt", "updatedAt"] },
                 raw: true,
-            })
+            });
             if (!data) data = {};
             resolve(data);
         } catch (err) {
             reject(err);
         }
-    })
-}
+    });
+};
 let handleGetSpecialClinicByID = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.DoctorInfo.findOne({
                 where: { doctorId: id },
                 attributes: {
-                    exclude: ["id", "createdAt", "updatedAt", "price", "address",
-                        "clinicID", "doctorId", "specialityID", "paycash"]
+                    exclude: [
+                        "id",
+                        "createdAt",
+                        "updatedAt",
+                        "price",
+                        "address",
+                        "clinicID",
+                        "doctorId",
+                        "specialityID",
+                        "paycash",
+                    ],
                 },
                 include: [
                     {
                         model: db.Allcode,
-                        as: 'priceData',
+                        as: "priceData",
                         attributes: ["valueVi", "valueEn"],
                     },
                     {
                         model: db.Specialty,
-                        as: 'specialityData',
+                        as: "specialityData",
                         attributes: ["name"],
                     },
                     {
                         model: db.Allcode,
-                        as: 'paymentData',
+                        as: "paymentData",
                         attributes: ["valueVi", "valueEn"],
                     },
                     {
@@ -231,15 +295,15 @@ let handleGetSpecialClinicByID = (id) => {
                     },
                 ],
                 raw: true,
-                nest: true
-            })
+                nest: true,
+            });
             if (!data) data = {};
             resolve(data);
         } catch (err) {
             reject(err);
         }
-    })
-}
+    });
+};
 module.exports = {
     getTopDoctor,
     handleGetAllDoctor,
@@ -248,5 +312,5 @@ module.exports = {
     handleScheduleDoctor,
     handleGetScheduleDoctor,
     handleGetDoctorInfoByID,
-    handleGetSpecialClinicByID
+    handleGetSpecialClinicByID,
 };

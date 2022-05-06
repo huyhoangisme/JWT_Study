@@ -41,7 +41,7 @@ let getAllDoctor = async (req, res) => {
             });
         }
     } catch (err) {
-        console(err);
+        console.log(err);
         return res.status(500).json({
             errCode: -1,
             message: "Error from server",
